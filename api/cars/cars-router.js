@@ -2,9 +2,12 @@ const express = require('express')
 
 const Cars = require('./cars-model')
 
+//middleware
+const { checkCarId, checkCarPayload, checkVinNumberValid } = require('./cars-middleware')
+
 const router = express.Router()
 
-router.get('/', (req, res, next) => {
+router.get('/', checkCarPayload, (req, res, next) => {
   Cars.getAll()
     .then(car => {
       res.status(200).json(car)
@@ -12,7 +15,7 @@ router.get('/', (req, res, next) => {
     .catch(next)
 })
 
-router.get('/:id', (req, res, next) => {
+router.get('/:id', checkCarId, checkVinNumberValid, (req, res, next) => {
   Cars.getById(req.params.id)
     .then(car => {
       res.status(200).json(car)
@@ -20,7 +23,7 @@ router.get('/:id', (req, res, next) => {
     .catch(next)
 })
 
-router.post('/', (req, res, next) => {
+router.post('/', checkCarPayload, (req, res, next) => {
   Cars.create(req.body)
     .then(car => {
       res.status(201).json(car)
